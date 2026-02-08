@@ -75,15 +75,10 @@ yourProject/
 ## Requirements
 
 - CST Studio Suite
-- VBA support enabled
 
 ## License
 
-[Add your license information here]
-
-## Contributing
-
-[Add contribution guidelines here]
+MIT License
 
 ---
 
