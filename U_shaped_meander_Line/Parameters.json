@@ -52,4 +52,10 @@
     "name": "mLine_La",
     "expr": "mLine_Nu*mLine_Pu + mLine_Wt",
     "value": ""
+},
+{
+    "name": "mt",
+    "expr": "0.035",
+    "value": ""
 }
+
