@@ -1,0 +1,134 @@
+' construct_MeanderLine
+
+Sub Main ()
+
+'## Merged Block - define brick: component1:meander_Lc
+    StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+    With Brick
+         .Reset
+         .Name "meander_Lc"
+         .Component "component1"
+         .Material "Copper (annealed)"
+         .Xrange "mLine_xloc", "mLine_xloc+mLine_Lc/2"
+         .Yrange "mLine_yloc-mLine_Wt/2", "mLine_yloc+mLine_Wt/2"
+         .Zrange "mLine_zloc", "mLine_zloc+mt"
+         .Create
+    End With
+    With Transform
+     .Reset
+     .Name "component1:meander_Lc"
+     .Vector "mLine_Lc/2+mLine_Nu*mLine_Pu+mLine_Wt", "0", "0"
+     .UsePickedPoints "False"
+     .InvertPickedPoints "False"
+     .MultipleObjects "True"
+     .GroupObjects "True"
+     .Repetitions "1"
+     .MultipleSelection "False"
+     .Destination ""
+     .Material ""
+     .AutoDestination "True"
+     .Transform "Shape", "Translate"
+    End With
+
+If mLine_Nu >= 1 Then
+    '## Merged Block - define brick: component1:meander_Lu
+    StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+    With Brick
+         .Reset
+         .Name "meander_Lu"
+         .Component "component1"
+         .Material "Copper (annealed)"
+         .Xrange "mLine_xloc+mLine_Lc/2", "mLine_xloc+mLine_Lc/2+mLine_Wt"
+         .Yrange "mLine_yloc-mLine_Lu", "mLine_yloc+mLine_Wt/2"
+         .Zrange "mLine_zloc", "mLine_zloc+mt"
+         .Create
+    End With
+
+    '## Merged Block - define brick: component1:meander_Wu
+    StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+    With Brick
+         .Reset
+         .Name "meander_Wu"
+         .Component "component1"
+         .Material "Copper (annealed)"
+         .Xrange "mLine_xloc+mLine_Lc/2", "mLine_xloc+mLine_Lc/2+2*mLine_Wt+mLine_Ws"
+         .Yrange "mLine_yloc-mLine_Lu-mLine_Wt/2", "mLine_yloc-mLine_Lu+mLine_Wt/2"
+         .Zrange "mLine_zloc", "mLine_zloc+mt"
+         .Create
+    End With
+
+    '## Merged Block - transform: translate component1:meander_Lu
+    StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+    With Transform
+         .Reset
+         .Name "component1:meander_Lu"
+         .Vector "mLine_Pu", "0", "0"
+         .UsePickedPoints "False"
+         .InvertPickedPoints "False"
+         .MultipleObjects "True"
+         .GroupObjects "True"
+         .Repetitions "1"
+         .MultipleSelection "False"
+         .Destination ""
+         .Material ""
+         .AutoDestination "True"
+         .Transform "Shape", "Translate"
+    End With
+
+    '## Merged Block - boolean add shapes: component1:meander_Lu, component1:meander_Wu
+    StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+    Solid.Add "component1:meander_Lu", "component1:meander_Wu"
+
+    '## Merged Block - rename block: component1:meander_Lu to: component1:meander_Ucell
+    StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+    Solid.Rename "component1:meander_Lu", "meander_Ucell"
+
+    If mLine_Nu > 1 Then
+      Dim kk As Integer
+    	For kk = 1 To mLine_Nu-1
+            '## Merged Block - transform: translate component1:meander_Ucell
+            StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+            With Transform
+                 .Reset
+                 .Name "component1:meander_Ucell"
+                 .Vector CStr(kk)&"*mLine_Pu", "0", "0"
+                 .UsePickedPoints "False"
+                 .InvertPickedPoints "False"
+                 .MultipleObjects "True"
+                 .GroupObjects "False"
+                 .Repetitions "1"
+                 .MultipleSelection "False"
+                 .Destination ""
+                 .Material ""
+                 .AutoDestination "True"
+                 .Transform "Shape", "Translate"
+            End With
+
+            '## Merged Block - transform: mirror component1:meander_Ucell_1
+             If kk Mod 2 <> 0 Then
+                StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+                With Transform
+                     .Reset
+                     .Name "component1:meander_Ucell_"&CStr(kk)
+                     .Origin "Free"
+                     .Center "mLine_xloc", "mLine_yloc", "mLine_zloc"
+                     .PlaneNormal "0", "1", "0"
+                     .MultipleObjects "False"
+                     .GroupObjects "False"
+                     .Repetitions "1"
+                     .MultipleSelection "False"
+                     .AutoDestination "True"
+                     .Transform "Shape", "Mirror"
+                End With
+             End If
+		 Next kk
+    	Dim ss As Integer
+	    For ss = 1 To mLine_Nu-1
+		  Solid.Add "component1:meander_Ucell", "component1:meander_Ucell_"&CStr(ss)
+		Next ss
+	End If
+	Solid.Add "component1:meander_Lc", "component1:meander_Ucell"
+End If
+Solid.Rename "component1:meander_Lc", "meanderLine"
+StopVersionStringOverrideMode
+End Sub

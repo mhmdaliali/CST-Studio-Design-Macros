@@ -1,0 +1,55 @@
+{
+    "name": "mLine_xloc",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_yloc",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_zloc",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_Lc",
+    "expr": "mLine_L - mLine_La",
+    "value": ""
+},
+{
+    "name": "mLine_Wt",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_Nu",
+    "expr": "int((mLine_L-mLine_Wt)/mLine_Pu)",
+    "value": ""
+},
+{
+    "name": "mLine_Pu",
+    "expr": "mLine_Wt+mLine_Ws",
+    "value": ""
+},
+{
+    "name": "mLine_Lu",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_Ws",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_L",
+    "expr": "0",
+    "value": ""
+},
+{
+    "name": "mLine_La",
+    "expr": "mLine_Nu*mLine_Pu + mLine_Wt",
+    "value": ""
+}
