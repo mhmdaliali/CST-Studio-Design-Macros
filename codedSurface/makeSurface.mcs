@@ -1,0 +1,58 @@
+' Make the Nx by Ny Surface
+
+Sub Main ()
+
+' Copying the UnitCell to make the first row
+With Transform
+     .Reset
+     .Name "UnitCell"
+     .Vector "0", "Py", "0"
+     .UsePickedPoints "False"
+     .InvertPickedPoints "False"
+     .MultipleObjects "True"
+     .GroupObjects "False"
+     .Repetitions "Ny-1"
+     .MultipleSelection "False"
+     .Destination ""
+     .Material ""
+     .AutoDestination "True"
+     .Transform "Shape", "Translate"
+End With
+
+
+'## Merged Block - transform: translate UnitCell
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+' Copying the UnitCell in y direction to make the first column
+
+' Make a new component called column, to put copied cells in it
+Component.New "Column"
+Component.Rename "UnitCell", "Column/UnitCell" ' Puts the furst cell into "Column"
+
+' The names of the copied cells of that column are in the string array "ColumnCellNames"
+Dim ColumnCellNames (1 To Ny-1) As String
+
+' Changing the component of all copied cells to "Column"
+For kk = 1 To Ny-1
+	ColumnCellNames(kk) = "UnitCell_" + CStr(kk)
+    Component.Rename ColumnCellNames(kk), "Column/"+ColumnCellNames(kk) '
+Next
+
+' Now Copying the Formed Column to make other Columns
+With Transform
+     .Reset
+     .Name "Column"
+     .Vector "Px", "0", "0"
+     .UsePickedPoints "False"
+     .InvertPickedPoints "False"
+     .MultipleObjects "True"
+     .GroupObjects "False"
+     .Repetitions "Nx-1"
+     .MultipleSelection "False"
+     .Destination ""
+     .Material ""
+     .AutoDestination "True"
+     .Transform "Shape", "Translate"
+End With
+' There is no need to change components names here
+StopVersionStringOverrideMode
+End Sub
