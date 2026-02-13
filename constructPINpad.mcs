@@ -1,0 +1,108 @@
+' constructPINpad
+
+Sub Main ()
+
+
+'## Merged Block - define material: Copper (annealed)
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Material
+     .Reset
+     .Name "Copper (annealed)"
+     .Folder ""
+     .FrqType "static"
+     .Type "Normal"
+     .SetMaterialUnit "Hz", "mm"
+     .Epsilon "1"
+     .Mu "1.0"
+     .Kappa "5.8e+007"
+     .TanD "0.0"
+     .TanDFreq "0.0"
+     .TanDGiven "False"
+     .TanDModel "ConstTanD"
+     .KappaM "0"
+     .TanDM "0.0"
+     .TanDMFreq "0.0"
+     .TanDMGiven "False"
+     .TanDMModel "ConstTanD"
+     .DispModelEps "None"
+     .DispModelMu "None"
+     .DispersiveFittingSchemeEps "Nth Order"
+     .DispersiveFittingSchemeMu "Nth Order"
+     .UseGeneralDispersionEps "False"
+     .UseGeneralDispersionMu "False"
+     .FrqType "all"
+     .Type "Lossy metal"
+     .SetMaterialUnit "GHz", "mm"
+     .Mu "1.0"
+     .Kappa "5.8e+007"
+     .Rho "8930.0"
+     .ThermalType "Normal"
+     .ThermalConductivity "401.0"
+     .SpecificHeat "390", "J/K/kg"
+     .MetabolicRate "0"
+     .BloodFlow "0"
+     .VoxelConvection "0"
+     .MechanicsType "Isotropic"
+     .YoungsModulus "120"
+     .PoissonsRatio "0.33"
+     .ThermalExpansionRate "17"
+     .Colour "1", "1", "0"
+     .Wireframe "False"
+     .Reflection "False"
+     .Allowoutline "True"
+     .Transparentoutline "False"
+     .Transparency "0"
+     .Create
+End With
+
+'## Merged Block - new component: component1
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Component.New "PIN_pad"
+
+'## Merged Block - define brick: component1:F_Cu
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Brick
+     .Reset 
+     .Name "PIN_F_Cu" 
+     .Component "PIN_pad" 
+     .Material "Copper (annealed)" 
+     .Xrange "0", "PIN_L+PIN_s+PIN_L" 
+     .Yrange "0", "PIN_W" 
+     .Zrange "0", "mt" 
+     .Create
+End With
+
+'## Merged Block - define brick: component1:F_Cu_Cut
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Brick
+     .Reset 
+     .Name "PIN_F_Cu_Cut" 
+     .Component "PIN_pad" 
+     .Material "Vacuum" 
+     .Xrange "PIN_L", "PIN_L+PIN_s" 
+     .Yrange "0", "PIN_W" 
+     .Zrange "0", "mt" 
+     .Create
+End With
+
+'## Merged Block - boolean subtract shapes: component1:F_Cu, component1:F_Cu_Cut
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Solid.Subtract "PIN_pad:PIN_F_Cu", "PIN_pad:PIN_F_Cu_Cut"
+
+'## Merged Block - transform: translate PIN_pad:PIN_F_Cu
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Transform 
+     .Reset 
+     .Name "PIN_pad:PIN_F_Cu" 
+     .Vector "-PIN_L-PIN_s/2", "-PIN_W/2", "0" 
+     .UsePickedPoints "False" 
+     .InvertPickedPoints "False" 
+     .MultipleObjects "False" 
+     .GroupObjects "False" 
+     .Repetitions "1" 
+     .MultipleSelection "False" 
+     .AutoDestination "True" 
+     .Transform "Shape", "Translate" 
+End With
+StopVersionStringOverrideMode 
+End Sub
