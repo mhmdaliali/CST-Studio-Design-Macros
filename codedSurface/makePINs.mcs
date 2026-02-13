@@ -1,0 +1,130 @@
+' PIN_Code
+
+Sub Main ()
+
+'## Merged Block - pick point
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+
+Dim CodeSeq As String
+CodeSeq = "0 0 1 1 0 0 1 1 0 0 1 1 0 0"
+
+Dim CodeSeqArr() As String
+CodeSeqArr = Split(CodeSeq," ")
+
+Dim Rpin As Double
+Dim Cpin As Double
+Dim kk As Integer
+
+For kk = 0 To Nx-1
+   'Preparing the R and C values depending on the coding sequence
+   If CodeSeqArr(kk)= "0" Then
+     Rpin = R_OFF
+     Cpin = C_OFF
+   ElseIf CodeSeqArr(kk)= "1" Then
+  	 Rpin = R_ON
+  	 Cpin = C_ON
+   End If
+   ' StoreParameter ( "macrokk", CStr(kk) )
+	'Making the right PIN diode
+    With Polygon3D
+     .Reset
+     .Name "PIN_right_Anode"
+     .Curve "curve1"
+     .Point Cstr(xpin_r1+kk*Px), "-Wpin/2", "zpin"
+     .Point Cstr(xpin_r1+kk*Px), "Wpin/2", "zpin"
+     .Create
+   End With
+   With Polygon3D
+     .Reset
+     .Name "PIN_right_Cathode"
+     .Curve "curve1"
+     .Point Cstr(xpin_r2+kk*Px), "-Wpin/2", "zpin"
+     .Point Cstr(xpin_r2+kk*Px), "Wpin/2", "zpin"
+     .Create
+   End With
+   Pick.PickEdgeOnCurveFromId "curve1:PIN_right_Anode", "1", "1"
+   Pick.PickEdgeOnCurveFromId "curve1:PIN_right_Cathode", "1", "1"
+   With LumpedFaceElement
+     .Reset
+     .SetName "PIN_right"
+     .Folder "Column"+Cstr(kk+1)
+     .SetType "RLCSerial"
+     .SetR Cstr(Rpin)
+     .SetL "0"
+     .SetC Cstr(Cpin)
+     .SetGs "0"
+     .SetI0 "1e-14"
+     .SetT "300"
+     .SetMonitor "True"
+     .CircuitFileName ""
+     .CircuitId "1"
+     .UseCopyOnly "True"
+     .UseRelativePath "False"
+     .SetP1 "True", "0.85", "0", "4.7775"
+     .SetP2 "True", "0.35", "0", "4.7775"
+     .SetInvert "False"
+     .UseProjection "False"
+     .ReverseProjection "False"
+     .Create
+   End With
+
+	 'Making the left PIN diode
+    With Polygon3D
+     .Reset
+     .Name "PIN_left_Anode"
+     .Curve "curve1"
+     .Point Cstr(xpin_l1+kk*Px), "-Wpin/2", "zpin"
+     .Point Cstr(xpin_l1+kk*Px), "Wpin/2", "zpin"
+     .Create
+   End With
+   With Polygon3D
+     .Reset
+     .Name "PIN_left_Cathode"
+     .Curve "curve1"
+     .Point Cstr(xpin_l2+kk*Px), "-Wpin/2", "zpin"
+     .Point Cstr(xpin_l2+kk*Px), "Wpin/2", "zpin"
+     .Create
+   End With
+   Pick.PickEdgeOnCurveFromId "curve1:PIN_left_Anode", "1", "1"
+   Pick.PickEdgeOnCurveFromId "curve1:PIN_left_Cathode", "1", "1"
+   With LumpedFaceElement
+     .Reset
+     .SetName "PIN_left"
+     .Folder "Column"+Cstr(kk+1)
+     .SetType "RLCSerial"
+     .SetR Cstr(Rpin)
+     .SetL "0"
+     .SetC Cstr(Cpin)
+     .SetGs "0"
+     .SetI0 "1e-14"
+     .SetT "300"
+     .SetMonitor "True"
+     .CircuitFileName ""
+     .CircuitId "1"
+     .UseCopyOnly "True"
+     .UseRelativePath "False"
+     .SetP1 "True", "0.85", "0", "4.7775"
+     .SetP2 "True", "0.35", "0", "4.7775"
+     .SetInvert "False"
+     .UseProjection "False"
+     .ReverseProjection "False"
+     .Create
+   End With
+   Curve.DeleteCurve "curve1"
+     ' Now Copying the PINs to make a full column
+     With Transform
+     .Reset
+     .Name "Column"+Cstr(kk+1)
+     .Vector "0", "Py", "0"
+     .UsePickedPoints "False"
+     .InvertPickedPoints "False"
+     .MultipleObjects "True"
+     .GroupObjects "False"
+     .Repetitions "Ny-1"
+     .MultipleSelection "False"
+     .Transform "LumpedElement", "Translate"
+     End With
+Next
+
+StopVersionStringOverrideMode 
+End Sub
