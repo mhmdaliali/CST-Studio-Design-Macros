@@ -1,0 +1,144 @@
+' construct_InterCap
+
+Sub Main ()
+
+
+'## Merged Block - new component: component1
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Component.New "InterDigital_Capacitor"
+
+'## Merged Block - define brick: component1:InterCap_strip
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Brick
+     .Reset 
+     .Name "InterCap_strip" 
+     .Component "InterDigital_Capacitor" 
+     .Material "Copper (annealed)" 
+     .Xrange "interCap_xloc+interCap_portL", "interCap_xloc+interCap_portL+interCap_stripL" 
+     .Yrange "interCap_yloc-interCap_stripW/2", "interCap_yloc+interCap_stripW/2" 
+     .Zrange "interCap_zloc", "interCap_zloc+mt" 
+     .Create
+End With
+
+'## Merged Block - define brick: InterDigital_Capacitor:InterCap_fingers
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Brick
+     .Reset 
+     .Name "InterCap_fingers" 
+     .Component "InterDigital_Capacitor" 
+     .Material "Copper (annealed)" 
+     .Xrange "interCap_xloc+interCap_portL+interCap_stripL", "interCap_xloc+interCap_portL+interCap_stripL+interCap_fingL" 
+     .Yrange "interCap_yloc+interCap_stripW/2-interCap_fingW", "interCap_yloc+interCap_stripW/2" 
+     .Zrange "interCap_zloc", "interCap_zloc+mt" 
+     .Create
+End With
+
+'## Merged Block - transform: translate InterDigital_Capacitor:InterCap_fingers
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Transform 
+     .Reset 
+     .Name "InterDigital_Capacitor:InterCap_fingers" 
+     .Vector "0", "-2*interCap_fingP", "0" 
+     .UsePickedPoints "False" 
+     .InvertPickedPoints "False" 
+     .MultipleObjects "True" 
+     .GroupObjects "True" 
+     .Repetitions "interCap_fingN-1" 
+     .MultipleSelection "False" 
+     .Destination "" 
+     .Material "" 
+     .AutoDestination "True" 
+     .Transform "Shape", "Translate" 
+End With
+
+'## Merged Block - define brick: InterDigital_Capacitor:InterCap_port
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+If interCap_portL = 0 Then
+   StoreParameter("interCap_portW","interCap_stripW")
+End If
+With Brick
+     .Reset 
+     .Name "InterCap_port" 
+     .Component "InterDigital_Capacitor" 
+     .Material "Copper (annealed)" 
+     .Xrange "interCap_xloc", "interCap_xloc+interCap_portL" 
+     .Yrange "interCap_yloc-interCap_portW/2", "interCap_yloc+interCap_portW/2" 
+     .Zrange "interCap_zloc", "interCap_zloc+mt" 
+     .Create
+End With
+
+'## Merged Block - boolean add shapes: InterDigital_Capacitor:InterCap_fingers, InterDigital_Capacitor:InterCap_strip
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Solid.Add "InterDigital_Capacitor:InterCap_fingers", "InterDigital_Capacitor:InterCap_strip"
+
+'## Merged Block - boolean add shapes: InterDigital_Capacitor:InterCap_fingers, InterDigital_Capacitor:InterCap_port
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Solid.Add "InterDigital_Capacitor:InterCap_fingers", "InterDigital_Capacitor:InterCap_port"
+
+'## Merged Block - rename block: InterDigital_Capacitor:InterCap_fingers to: InterDigital_Capacitor:InterCap_Arm
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Solid.Rename "InterDigital_Capacitor:InterCap_fingers", "InterCap_Arm"
+
+'## Merged Block - transform: mirror InterDigital_Capacitor:InterCap_Arm
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Transform 
+     .Reset 
+     .Name "InterDigital_Capacitor:InterCap_Arm" 
+     .Origin "Free" 
+     .Center "interCap_xloc", "0", "0" 
+     .PlaneNormal "1", "0", "0" 
+     .MultipleObjects "True" 
+     .GroupObjects "False" 
+     .Repetitions "1" 
+     .MultipleSelection "False" 
+     .Destination "" 
+     .Material "" 
+     .AutoDestination "True" 
+     .Transform "Shape", "Mirror" 
+End With
+
+'## Merged Block - transform: mirror InterDigital_Capacitor:InterCap_Arm_1
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Transform 
+     .Reset 
+     .Name "InterDigital_Capacitor:InterCap_Arm_1" 
+     .Origin "CommonCenter" 
+     .Center "0", "0", "0" 
+     .PlaneNormal "0", "1", "0" 
+     .MultipleObjects "False" 
+     .GroupObjects "False" 
+     .Repetitions "1" 
+     .MultipleSelection "False" 
+     .AutoDestination "True" 
+     .Transform "Shape", "Mirror" 
+End With
+
+'## Merged Block - transform: translate InterDigital_Capacitor:InterCap_Arm_1
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+With Transform 
+     .Reset 
+     .Name "InterDigital_Capacitor:InterCap_Arm_1" 
+     .Vector "interCap_portL+interCap_stripL+interCap_fingL+interCap_portL+interCap_stripL+interCap_edgeS", "0", "0" 
+     .UsePickedPoints "False" 
+     .InvertPickedPoints "False" 
+     .MultipleObjects "False" 
+     .GroupObjects "False" 
+     .Repetitions "1" 
+     .MultipleSelection "False" 
+     .AutoDestination "True" 
+     .Transform "Shape", "Translate" 
+End With
+
+'## Merged Block - boolean add shapes: InterDigital_Capacitor:InterCap_Arm, InterDigital_Capacitor:InterCap_Arm_1
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Solid.Add "InterDigital_Capacitor:InterCap_Arm", "InterDigital_Capacitor:InterCap_Arm_1"
+
+'## Merged Block - rename block: InterDigital_Capacitor:InterCap_Arm to: InterDigital_Capacitor:InterCap
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Solid.Rename "InterDigital_Capacitor:InterCap_Arm", "InterCap"
+
+'## Merged Block - clear picks
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614" 
+Pick.ClearAllPicks
+StopVersionStringOverrideMode 
+End Sub
