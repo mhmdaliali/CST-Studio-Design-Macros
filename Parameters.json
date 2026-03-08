@@ -1,0 +1,111 @@
+{
+    "parameters": [
+
+        {
+            "expr": "4",
+            "name": "srr_Lcell",
+            "value": "4"
+        },
+        {
+            "expr": "3",
+            "name": "srr_Wcell",
+            "value": "3"
+        },
+        {
+            "expr": "0.15",
+            "name": "srr_g",
+            "value": "0.15"
+        },
+        {
+            "expr": "0.13",
+            "name": "srr_insep",
+            "value": "0.13"
+        },
+        {
+            "expr": "0",
+            "name": "srr_xloc",
+            "value": "0"
+        },
+        {
+            "expr": "0",
+            "name": "srr_yloc",
+            "value": "0"
+        },
+        {
+            "expr": "0",
+            "name": "srr_zloc",
+            "value": "0"
+        },
+        {
+            "expr": "0.2",
+            "name": "srr_portW",
+            "value": "0.2"
+        },
+        {
+            "expr": "0.2",
+            "name": "srr_portL",
+            "value": "0.2"
+        },
+        {
+            "expr": "2",
+            "name": "srr_Nstage",
+            "value": "2"
+        },
+        {
+            "expr": "0.13",
+            "name": "srr_Wt",
+            "value": "0.13"
+        },
+        {
+            "expr": "True",
+            "name": "srr_gapFlip",
+            "value": "-1"
+        },
+        {
+            "expr": "int(  (srr_Lall-2*srr_portL)/srr_Pcell )",
+            "name": "srr_Ncells",
+            "value": "3"
+        },
+        {
+            "expr": "0.2",
+            "name": "srr_Scell",
+            "value": "0.2"
+        },
+        {
+            "expr": "0.035",
+            "name": "srr_mt",
+            "value": "0.035"
+        },
+        {
+            "expr": "14",
+            "name": "srr_Lall",
+            "value": "14"
+        },
+        {
+            "expr": "(srr_Lall - srr_La)/2",
+            "name": "srr_Lcomp",
+            "value": "1.62"
+        },
+        {
+            "expr": "0.8",
+            "name": "srr_tapL",
+            "value": "0.8"
+        },
+        {
+            "expr": "0.8",
+            "name": "srr_tapW",
+            "value": "0.8"
+        },
+        {
+            "expr": "srr_Lcell+srr_Scell",
+            "name": "srr_Pcell",
+            "value": "4.2"
+        },
+        {
+            "expr": "2*srr_portL+(  (1-srr_tapL^srr_Ncells)/(1-srr_tapL)  )*srr_Lcell+srr_Ncells*srr_Scell",
+            "name": "srr_La",
+            "value": "10.76"
+        }
+    ],
+    "version": 1
+}

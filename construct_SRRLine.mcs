@@ -1,0 +1,209 @@
+' construct_SRRcellsLine
+
+Sub Main ()
+
+
+'## Merged Block - new component: component1
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+Component.New "SRR_Line"
+
+'## Merged Block - define brick: component1:portLine
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+With Brick
+     .Reset
+     .Name "portLine"
+     .Component "SRR_Line"
+     .Material "Copper (annealed)"
+     .Xrange "srr_xloc", "srr_xloc+srr_portL+srr_Lcomp"
+     .Yrange "srr_yloc-srr_portW/2", "srr_yloc+srr_portW/2"
+     .Zrange "srr_zloc", "srr_zloc+srr_mt"
+     .Create
+End With
+
+'## Merged Block - transform: translate SRR_Line:portLine
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+With Transform
+     .Reset
+     .Name "SRR_Line:portLine"
+     .Vector "srr_Lall - srr_portL-srr_Lcomp", "0", "0"
+     .UsePickedPoints "False"
+     .InvertPickedPoints "False"
+     .MultipleObjects "True"
+     .GroupObjects "True"
+     .Repetitions "1"
+     .MultipleSelection "False"
+     .Destination ""
+     .Material ""
+     .AutoDestination "True"
+     .Transform "Shape", "Translate"
+End With
+
+Dim ss As Integer
+For ss = 1 To srr_Ncells
+  '## Merged Block - define brick: SRR_Line:SRRcell_Arm
+  StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+  With Brick
+       .Reset
+       .Name "SRRcell_Arm"
+       .Component "SRR_Line"
+       .Material "Copper (annealed)"
+       .Xrange "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell*srr_tapL^"&Cstr(ss-1)&"+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1)
+       .Yrange "srr_yloc-0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1), "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)
+       .Zrange "srr_zloc", "srr_zloc+srr_mt"
+       .Create
+  End With
+
+  '## Merged Block - define brick: SRR_Line:SRRcell_ArmCut
+  StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+  With Brick
+       .Reset
+       .Name "SRRcell_ArmCut"
+       .Component "SRR_Line"
+       .Material "Vacuum"
+       .Xrange "srr_xloc+srr_portL+srr_Lcomp+srr_Wt+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell*srr_tapL^"&Cstr(ss-1)&"-srr_Wt+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1)
+       .Yrange "srr_yloc-0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"+srr_Wt", "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"-srr_Wt"
+       .Zrange "srr_zloc", "srr_zloc+srr_mt"
+       .Create
+  End With
+
+  '## Merged Block - boolean subtract shapes: SRR_Line:SRRcell_Arm, SRR_Line:SRRcell_ArmCut
+  StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+  Solid.Subtract "SRR_Line:SRRcell_Arm", "SRR_Line:SRRcell_ArmCut"
+
+  '## Merged Block - define brick: SRR_Line:SRRcell_ArmGap
+  StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+  With Brick
+       .Reset
+       .Name "SRRcell_ArmGap"
+       .Component "SRR_Line"
+       .Material "Vacuum"
+       .Xrange "srr_xloc+srr_portL+srr_Lcomp+0.5*srr_Lcell*srr_tapL^"&Cstr(ss-1)&"-srr_g/2+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "srr_xloc+srr_portL+srr_Lcomp+0.5*srr_Lcell*srr_tapL^"&Cstr(ss-1)&"+srr_g/2+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1)
+       .Yrange "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"-srr_Wt", "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)
+       .Zrange "srr_zloc", "srr_zloc+srr_mt"
+       .Create
+  End With
+
+  '## Merged Block - boolean subtract shapes: SRR_Line:SRRcell_Arm, SRR_Line:SRRcell_ArmGap
+  StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+  Solid.Subtract "SRR_Line:SRRcell_Arm", "SRR_Line:SRRcell_ArmGap"
+
+  Dim kk As Integer
+  Dim checkL As Double
+  Dim checkW As Double
+
+  For kk = 1 To srr_Nstage-1
+      checkL = srr_Lcell - 2*srr_Wt - kk*(2*srr_insep+2*srr_Wt)
+      checkW = srr_Wcell - 2*srr_Wt - kk*(2*srr_insep+2*srr_Wt)
+      If (checkL = 0) Or (checkW = 0) Then
+          Exit For
+      End If
+      StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+      With Brick
+        .Reset
+        .Name "SRRcell_Arm_"&Cstr(kk)
+        .Component "SRR_Line"
+        .Material "Copper (annealed)"
+        .Xrange "srr_xloc+srr_portL+srr_Lcomp+(srr_insep+srr_Wt)*"&Cstr(kk)&"+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell*srr_tapL^"&Cstr(ss-1)&"-(srr_insep+srr_Wt)*"&Cstr(kk)&"+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1)
+        .Yrange "srr_yloc-0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"+(srr_insep+srr_Wt)*"&Cstr(kk), "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"-(srr_insep+srr_Wt)*"&Cstr(kk)
+        .Zrange "srr_zloc", "srr_zloc+srr_mt"
+        .Create
+      End With
+      StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+      With Brick
+        .Reset
+        .Name "SRRcell_ArmCut_"&Cstr(kk)
+        .Component "SRR_Line"
+        .Material "Vacuum"
+        .Xrange "srr_xloc+srr_portL+srr_Lcomp+srr_Wt+(srr_insep+srr_Wt)*"&Cstr(kk)&"+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell*srr_tapL^"&Cstr(ss-1)&"-srr_Wt-(srr_insep+srr_Wt)*"&Cstr(kk)&"+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1)
+        .Yrange "srr_yloc-0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"+srr_Wt+(srr_insep+srr_Wt)*"&Cstr(kk), "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"-srr_Wt-(srr_insep+srr_Wt)*"&Cstr(kk)
+        .Zrange "srr_zloc", "srr_zloc+srr_mt"
+        .Create
+      End With
+      '## Merged Block - boolean subtract shapes: SRR_Line:SRRcell_Arm, SRR_Line:SRRcell_ArmGap
+      StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+      Solid.Subtract "SRR_Line:SRRcell_Arm_"&Cstr(kk), "SRR_Line:SRRcell_ArmCut_"&Cstr(kk)
+      '## Merged Block - define brick: SRR_Line:SRRcell_ArmGap
+      StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+      With Brick
+        .Reset
+        .Name "SRRcell_ArmGap_"&Cstr(kk)
+        .Component "SRR_Line"
+        .Material "Vacuum"
+        .Xrange "srr_xloc+srr_portL+srr_Lcomp+0.5*srr_Lcell*srr_tapL^"&Cstr(ss-1)&"-srr_g/2+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "srr_xloc+srr_portL+srr_Lcomp+0.5*srr_Lcell*srr_tapL^"&Cstr(ss-1)&"+srr_g/2+srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1)
+        .Yrange "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"-srr_Wt-(srr_insep+srr_Wt)*"&Cstr(kk), "srr_yloc+0.5*srr_Wcell*srr_tapW^"&Cstr(ss-1)&"-(srr_insep+srr_Wt)*"&Cstr(kk)
+        .Zrange "srr_zloc", "srr_zloc+srr_mt"
+        .Create
+      End With
+      '## Merged Block - boolean subtract shapes: SRR_Line:SRRcell_Arm, SRR_Line:SRRcell_ArmGap
+      StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+      Solid.Subtract "SRR_Line:SRRcell_Arm_"&Cstr(kk), "SRR_Line:SRRcell_ArmGap_"&Cstr(kk)
+      If srr_gapFlip Then
+         With Transform
+           .Reset
+           .Name "SRR_Line:SRRcell_Arm_"&Cstr(kk)
+           .Origin "CommonCenter"
+           .Center "0", "0", "0"
+           .PlaneNormal "0", "1", "0"
+           .MultipleObjects "False"
+           .GroupObjects "False"
+           .Repetitions "1"
+           .MultipleSelection "False"
+           .AutoDestination "True"
+           .Transform "Shape", "Mirror"
+         End With
+      End If
+  Next
+' Adding the Arms into one cell
+  For kk = 1 To srr_Nstage-1
+  	  Solid.Add "SRR_Line:SRRcell_Arm", "SRR_Line:SRRcell_Arm_"&Cstr(kk)
+  Next
+  Solid.Rename "SRR_Line:SRRcell_Arm", "SRRcell_"&Cstr(ss)
+Next
+
+For ss = 2 To srr_Ncells
+	Solid.Add "SRR_Line:SRRcell_1", "SRR_Line:SRRcell_"&Cstr(ss)
+Next
+Solid.Rename "SRR_Line:SRRcell_1", "SRRcells"
+
+'## Merged Block - define brick: SRR_Line:inteConnect
+StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+With Brick
+     .Reset
+     .Name "interConnect"
+     .Component "SRR_Line"
+     .Material "Copper (annealed)"
+     .Xrange "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell", "srr_xloc+srr_portL+srr_Lcomp+srr_Lcell+srr_Scell"
+     .Yrange "srr_yloc-srr_portW/2", "srr_yloc+srr_portW/2"
+     .Zrange "srr_zloc", "srr_zloc+srr_mt"
+     .Create
+End With
+
+If srr_Ncells >= 2 Then
+'## Merged Block - transform: translate SRR_Line:inteConnect
+ For ss = 2 To (srr_Ncells)
+   StartVersionStringOverrideMode "2024.5|33.0.1|20240614"
+   With Transform
+       .Reset
+       .Name "SRR_Line:interConnect"
+       .Vector "srr_tapL*srr_Lcell*(1-srr_tapL^"&Cstr(ss-1)&")/(1-srr_tapL)+srr_Scell*"&Cstr(ss-1), "0", "0"
+       .UsePickedPoints "False"
+       .InvertPickedPoints "False"
+       .MultipleObjects "True"
+       .GroupObjects "False"
+       .Repetitions "1"
+       .MultipleSelection "False"
+       .Destination ""
+       .Material ""
+       .AutoDestination "True"
+       .Transform "Shape", "Translate"
+    End With
+ Next
+ For ss = 1 To (srr_Ncells - 1)
+ 	Solid.Add "SRR_Line:interConnect", "SRR_Line:interConnect_"&Cstr(ss)
+ Next
+End If
+Solid.Add "SRR_Line:SRRcells", "SRR_Line:interConnect"
+Solid.Add "SRR_Line:SRRcells", "SRR_Line:portLine"
+Solid.Rename "SRR_Line:SRRcells", "SRRcells_Line"
+StopVersionStringOverrideMode
+End Sub
